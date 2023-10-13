@@ -41,10 +41,19 @@ func main() {
 	dg.Close()
 }
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
+	// Define the prefix
+	prefix := "#"
 	// Ignore all messages created by the bot itself
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
+	// Check if the message has the prefix
+	if m.Content[:1] != prefix {
+		return
+	}
+	// Remove the prefix from the message
+	m.Content = m.Content[1:]
+
 	// If the message is "ping" reply with "Pong!"
 	if m.Content == "ping" {
 		s.ChannelMessageSend(m.ChannelID, "Pong!")
@@ -53,4 +62,9 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Content == "pong" {
 		s.ChannelMessageSend(m.ChannelID, "Ping!")
 	}
+	// If the message is "hello" reply with "Hello!" and a mention
+	if m.Content == "hello" {
+		s.ChannelMessageSend(m.ChannelID, "Hello! "+m.Author.Mention())
+	}
+
 }
